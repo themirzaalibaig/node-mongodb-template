@@ -9,10 +9,15 @@ export const addTestJob = async (name: string, data: any) => {
 };
 
 export const initTestWorker = () => {
-  const worker = createWorker('testQueue', async (job: Job) => {
-    logger.info({ id: job.id, name: job.name, data: job.data }, 'Processing job');
-  });
-  worker.on('completed', (job) => logger.info({ id: job.id }, 'Job completed'));
-  worker.on('failed', (job, err) => logger.error({ id: job?.id, error: err }, 'Job failed'));
-  return worker;
+  try {
+    const worker = createWorker('testQueue', async (job: Job) => {
+      logger.info({ id: job.id, name: job.name, data: job.data }, 'Processing job');
+    });
+    worker.on('completed', (job) => logger.info({ id: job.id }, 'Job completed'));
+    worker.on('failed', (job, err) => logger.error({ id: job?.id, error: err }, 'Job failed'));
+    return worker;
+  } catch (err) {
+    logger.error({ error: err }, 'Failed to initialize test worker');
+    return undefined as any;
+  }
 };

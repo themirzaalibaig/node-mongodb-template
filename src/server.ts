@@ -39,20 +39,27 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 const start = async (): Promise<void> => {
+  await connectMongo();
   try {
-    await connectMongo();
     await connectRedis();
-    const server = http.createServer(app);
-    initWebsocket(server);
-    initTestWorker();
-    server.listen(env.PORT, () => {
-      logger.info(`Server listening on port http://localhost:${env.PORT}`);
-    });
-    addTestJob('boot', { startedAt: Date.now() }).catch(() => {});
   } catch (err) {
-    logger.error({ error: err }, 'Startup error');
-    process.exit(1);
+    logger.error({ error: err }, 'Redis init failed');
   }
+  const server = http.createServer(app);
+  try {
+    initWebsocket(server);
+  } catch (err) {
+    logger.error({ error: err }, 'Websocket init failed');
+  }
+  try {
+    initTestWorker();
+  } catch (err) {
+    logger.error({ error: err }, 'Queue worker init failed');
+  }
+  server.listen(env.PORT, () => {
+    logger.info(`Server listening on port http://localhost:${env.PORT}`);
+  });
+  addTestJob('boot', { startedAt: Date.now() }).catch(() => {});
 };
 
 start();

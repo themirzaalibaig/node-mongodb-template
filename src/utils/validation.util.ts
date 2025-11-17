@@ -12,7 +12,10 @@ export const formatZodErrors = (zodError: ZodError, prefix: string): ValidationE
       field,
       message: issue.message,
       code: issue.code,
-      value: issue.path.length > 0 ? getNestedValue(issue.received, issue.path) : undefined,
+      value:
+        issue.path.length > 0 && (issue as any).input
+          ? getNestedValue((issue as any).input, issue.path)
+          : undefined,
     };
   });
 };

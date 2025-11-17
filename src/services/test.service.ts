@@ -35,13 +35,16 @@ export const listTests = async (dto: GetAllTestsDto) => {
   const sortSpec: Record<string, 1 | -1> = { [sortField]: order === 'asc' ? 1 : -1 };
   const totalItems = await TestModel.countDocuments();
 
-  if (dto.page && dto.limit) {
-    const skip = (dto.page - 1) * dto.limit;
-    const cacheKey = makeKey('test', 'list', dto.page, dto.limit, sortField, order);
+  const page = dto.page;
+  const limit = dto.limit;
+
+  if (page && limit) {
+    const skip = (page - 1) * limit;
+    const cacheKey = makeKey('test', 'list', page, limit, sortField, order);
     const cached = await cacheGet<any>(cacheKey);
     if (cached) return cached;
-    const data = await TestModel.find().sort(sortSpec).skip(skip).limit(dto.limit);
-    const result = { data, totalItems, currentPage: dto.page, itemsPerPage: dto.limit };
+    const data = await TestModel.find().sort(sortSpec).skip(skip).limit(limit);
+    const result = { data, totalItems, currentPage: page, itemsPerPage: limit };
     await cacheSet(cacheKey, result, 60);
     return result;
   }

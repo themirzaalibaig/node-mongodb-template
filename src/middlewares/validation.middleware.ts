@@ -67,8 +67,7 @@ export const validate = <Opts extends ValidationOptions>(schema: ZodSchema | Opt
         if (!result.success) {
           errors.push(...formatZodErrors(result.error, 'body'));
         } else {
-          // Narrow the request type
-          (req as any).body = result.data;
+          Object.assign(req.body as any, result.data);
         }
       }
 
@@ -78,7 +77,7 @@ export const validate = <Opts extends ValidationOptions>(schema: ZodSchema | Opt
         if (!result.success) {
           errors.push(...formatZodErrors(result.error, 'query'));
         } else {
-          (req as any).query = result.data;
+          Object.assign(req.query as any, result.data);
         }
       }
 
@@ -88,7 +87,7 @@ export const validate = <Opts extends ValidationOptions>(schema: ZodSchema | Opt
         if (!result.success) {
           errors.push(...formatZodErrors(result.error, 'params'));
         } else {
-          (req as any).params = result.data;
+          Object.assign(req.params as any, result.data);
         }
       }
 
@@ -98,7 +97,8 @@ export const validate = <Opts extends ValidationOptions>(schema: ZodSchema | Opt
         if (!result.success) {
           errors.push(...formatZodErrors(result.error, 'headers'));
         } else {
-          (req as any).headers = result.data;
+          (req as any).validated = (req as any).validated || {};
+          (req as any).validated.headers = result.data;
         }
       }
 

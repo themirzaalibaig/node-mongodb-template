@@ -6,10 +6,10 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - '5173:5173'
+      - '9000:9000'
     environment:
       NODE_ENV: development
-      PORT: 5173
+      PORT: 9000
       MONGO_URI: mongodb://mongo:27017/node_mongodb_template
       REDIS_URL: redis://redis:6379
       LOG_LEVEL: debug

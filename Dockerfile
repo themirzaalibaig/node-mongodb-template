@@ -11,7 +11,7 @@ RUN pnpm install --frozen-lockfile || pnpm install
 # Copy source
 COPY . .
 
-EXPOSE 5173
+EXPOSE 9000
 
 # Default to production start; compose overrides with dev
 CMD ["pnpm", "start"]

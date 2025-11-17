@@ -54,7 +54,7 @@ export const deleteTestController = async (
 };
 
 export const listTestsController = async (req: TypedRequest<GetAllTestsDto>, res: Response) => {
-  const dto = req.query;
+  const dto = req.query as GetAllTestsDto;
   const result = await listTests(dto);
   if (dto.page && dto.limit) {
     return Res.paginated(res, result.data, result.totalItems, dto.page, dto.limit);
