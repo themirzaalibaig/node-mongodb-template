@@ -1,9 +1,13 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Res } from '@/utils';
-import { GetAllTestDto, GetAllTestsDto } from '@/dto';
+import { CreateTestDto, UpdateTestDto, GetAllTestsDto, IdParams } from '@/dto';
 import { createTest, getTestById, updateTestById, deleteTestById, listTests } from '@/services';
+import { TypedRequest } from '@/types';
 
-export const createTestController = async (req: Request, res: Response) => {
+export const createTestController = async (
+  req: TypedRequest<unknown, CreateTestDto>,
+  res: Response,
+) => {
   try {
     const doc = await createTest(req.body);
     return Res.created(res, doc);
@@ -15,13 +19,19 @@ export const createTestController = async (req: Request, res: Response) => {
   }
 };
 
-export const getTestController = async (req: Request, res: Response) => {
+export const getTestController = async (
+  req: TypedRequest<unknown, unknown, IdParams>,
+  res: Response,
+) => {
   const doc = await getTestById(req.params.id);
   if (!doc) return Res.notFound(res, 'Test not found');
   return Res.success(res, doc);
 };
 
-export const updateTestController = async (req: Request, res: Response) => {
+export const updateTestController = async (
+  req: TypedRequest<unknown, UpdateTestDto, IdParams>,
+  res: Response,
+) => {
   try {
     const doc = await updateTestById(req.params.id, req.body);
     if (!doc) return Res.notFound(res, 'Test not found');
@@ -34,14 +44,17 @@ export const updateTestController = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteTestController = async (req: Request, res: Response) => {
+export const deleteTestController = async (
+  req: TypedRequest<unknown, unknown, IdParams>,
+  res: Response,
+) => {
   const doc = await deleteTestById(req.params.id);
   if (!doc) return Res.notFound(res, 'Test not found');
   return Res.noContent(res);
 };
 
-export const listTestsController = async (req: Request, res: Response) => {
-  const dto = req.query as GetAllTestsDto;
+export const listTestsController = async (req: TypedRequest<GetAllTestsDto>, res: Response) => {
+  const dto = req.query;
   const result = await listTests(dto);
   if (dto.page && dto.limit) {
     return Res.paginated(res, result.data, result.totalItems, dto.page, dto.limit);

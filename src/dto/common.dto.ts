@@ -121,3 +121,7 @@ export interface PermissionsDto {
 }
 
 export interface QueryDto extends PaginationDto, SortDto, SearchDto, DateRangeDto, ActiveDto {}
+
+export interface IdParams {
+  id: string;
+}

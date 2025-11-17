@@ -6,3 +6,4 @@ export * from './queue.util';
 export * from './email.util';
 export * from './bcrypt.util';
 export * from './websocket.util';
+export * from './validation.util';

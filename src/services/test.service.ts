@@ -1,6 +1,6 @@
 import { TestModel } from '@/models';
 import { cacheGet, cacheSet, cacheDel, makeKey } from '@/utils';
-import { CreateTestDto, UpdateTestDto, GetAllTestDto } from '@/dto';
+import { CreateTestDto, UpdateTestDto, GetAllTestsDto } from '@/dto';
 
 export const createTest = async (payload: CreateTestDto) => {
   const doc = await TestModel.create(payload);
@@ -29,8 +29,8 @@ export const deleteTestById = async (id: string) => {
   return doc;
 };
 
-export const listTests = async (dto: GetAllTestDto) => {
-  const sortField = dto.sortBy || 'createdAt';
+export const listTests = async (dto: GetAllTestsDto) => {
+  const sortField = dto.sort || (dto as any).sortBy || 'createdAt';
   const order = dto.order || 'desc';
   const sortSpec: Record<string, 1 | -1> = { [sortField]: order === 'asc' ? 1 : -1 };
   const totalItems = await TestModel.countDocuments();

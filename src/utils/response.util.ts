@@ -4,9 +4,9 @@ import {
   HttpStatusCode,
   ResponseMeta,
   SuccessResponse,
-  ValidationError,
-} from '@/types/api.types';
-import { logger } from '@/utils/logger.util';
+  type ValidationError,
+} from '@/types';
+import { logger } from '@/utils';
 
 export const success = <T>(
   res: Response,

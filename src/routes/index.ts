@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { ResponseUtil } from '@/utils/response';
+import { Res } from '@/utils/response';
 import { env } from '@/config/env.config';
 import testsRouter from '@/routes/tests.routes';
 
 const router = Router();
 
 router.get('/health', (req, res) => {
-  return ResponseUtil.success(
+  return Res.success(
     res,
     {
       status: 'ok',

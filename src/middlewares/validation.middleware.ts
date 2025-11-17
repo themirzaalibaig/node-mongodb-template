@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
-import z, { ZodError, ZodSchema } from 'zod';
+import z, { ZodSchema } from 'zod';
 import { ValidationError } from '@/types';
-import { logger, Res } from '@/utils';
+import { formatZodErrors, logger, Res } from '@/utils';
 import { TypedRequest } from '@/types';
 
 export interface ValidationOptions {
@@ -102,9 +102,6 @@ export const validate = <Opts extends ValidationOptions>(schema: ZodSchema | Opt
         }
       }
 
-      // -----------------------------------------------------------------
-      // Respond with errors or continue
-      // -----------------------------------------------------------------
       if (errors.length > 0) {
         logger.warn({ errors, path: req.path, method: req.method }, 'Validation errors');
         Res.validationError(res, errors);
@@ -124,27 +121,4 @@ export const validate = <Opts extends ValidationOptions>(schema: ZodSchema | Opt
       Res.internalError(res, 'Validation processing failed');
     }
   };
-};
-
-/* --------------------------------------------------------------------- */
-/* Helper utilities (unchanged, just re-exported)                         */
-/* --------------------------------------------------------------------- */
-const formatZodErrors = (zodError: ZodError, prefix: string): ValidationError[] => {
-  return zodError.issues.map((issue: any) => {
-    const field =
-      prefix === 'body' && issue.path.length > 0
-        ? issue.path.join('.')
-        : prefix + (issue.path.length > 0 ? '.' + issue.path.join('.') : '');
-
-    return {
-      field,
-      message: issue.message,
-      code: issue.code,
-      value: issue.path.length > 0 ? getNestedValue(issue.received, issue.path) : undefined,
-    };
-  });
-};
-
-const getNestedValue = (obj: any, path: (string | number)[]): any => {
-  return path.reduce((cur, key) => cur?.[key], obj);
 };
