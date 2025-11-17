@@ -98,3 +98,48 @@ export const subscribe = async (
     if (ch === channel) handler(msg);
   });
 };
+
+export const deleteKeysByPattern = async (pattern: string): Promise<number> => {
+  let cursor = '0';
+  let deleted = 0;
+  do {
+    const [next, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 200);
+    cursor = next;
+    if (keys.length > 0) {
+      deleted += await redis.del(...keys);
+    }
+  } while (cursor !== '0');
+  return deleted;
+};
+
+export const invalidateEntityListCache = async (
+  entity: string,
+  tenantId?: string,
+): Promise<number> => {
+  const prefix = tenantId ? makeKey(tenantId, entity, 'list') : makeKey(entity, 'list');
+  return deleteKeysByPattern(`${prefix}:*`);
+};
+
+export const buildCacheVersionKey = (entity: string, tenantId = 'global'): string => {
+  return makeKey('cachever', tenantId, entity);
+};
+
+export const readCacheVersion = async (entity: string, tenantId?: string): Promise<number> => {
+  const key = buildCacheVersionKey(entity, tenantId || 'global');
+  const v = await getString(key);
+  return v ? Number(v) : 0;
+};
+
+export const incrementCacheVersion = async (entity: string, tenantId?: string): Promise<number> => {
+  const key = buildCacheVersionKey(entity, tenantId || 'global');
+  return incr(key);
+};
+
+export const buildVersionedCacheKey = async (
+  entity: string,
+  parts: Array<string | number>,
+  tenantId?: string,
+): Promise<string> => {
+  const v = await readCacheVersion(entity, tenantId);
+  return makeKey('v', v, tenantId || 'global', entity, ...parts);
+};
