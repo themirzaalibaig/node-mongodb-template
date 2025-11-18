@@ -27,7 +27,7 @@ export const getTestController = async (
 ) => {
   const doc = await getTestById(req.params.id);
   if (!doc) return Res.notFound(res, 'Test not found');
-  return Res.success(res, doc);
+  return Res.success(res, { test: doc });
 };
 
 export const updateTestController = async (
@@ -37,10 +37,12 @@ export const updateTestController = async (
   try {
     const doc = await updateTestById(req.params.id, req.body);
     if (!doc) return Res.notFound(res, 'Test not found');
-    return Res.success(res, doc, 'Updated');
+    return Res.success(res, { test: doc }, 'Updated');
   } catch (err: any) {
     if (err?.code === 11000) {
-      return Res.conflict(res, 'Email already exists');
+      return Res.conflict(res, 'Email already exists', [
+        { field: 'email', message: 'Email already exists', value: req.body.email },
+      ]);
     }
     return Res.internalError(res);
   }
