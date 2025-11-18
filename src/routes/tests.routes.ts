@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validate } from '@/middlewares/validation.middleware';
+import { idempotency } from '@/middlewares';
 import {
   createTestSchema,
   updateTestSchema,
@@ -17,7 +18,12 @@ import {
 const testsRouter = Router();
 
 testsRouter.get('/', validate({ query: listTestsQuerySchema }), listTestsController);
-testsRouter.post('/', validate({ body: createTestSchema }), createTestController);
+testsRouter.post(
+  '/',
+  validate({ body: createTestSchema }),
+  idempotency('createTest'),
+  createTestController,
+);
 testsRouter.get('/:id', validate({ params: testIdParamsSchema }), getTestController);
 testsRouter.put(
   '/:id',
