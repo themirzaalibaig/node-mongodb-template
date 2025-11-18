@@ -10,10 +10,12 @@ export const createTestController = async (
 ) => {
   try {
     const doc = await createTest(req.body);
-    return Res.created(res, doc);
+    return Res.created(res, { test: doc });
   } catch (err: any) {
     if (err?.code === 11000) {
-      return Res.conflict(res, 'Email already exists');
+      return Res.conflict(res, 'Email already exists', [
+        { field: 'email', message: 'Email already exists', value: req.body.email },
+      ]);
     }
     return Res.internalError(res);
   }
@@ -54,12 +56,12 @@ export const deleteTestController = async (
 };
 
 export const listTestsController = async (req: TypedRequest<GetAllTestsDto>, res: Response) => {
-  const dto = req.query as GetAllTestsDto;
+  const dto = req.query;
   const result = await listTests(dto);
   if (dto.page && dto.limit) {
-    return Res.paginated(res, result.data, result.totalItems, dto.page, dto.limit);
+    return Res.paginated(res, { tests: result.data }, result.totalItems, dto.page, dto.limit);
   }
-  return Res.success(res, result.data, 'Data retrieved successfully', undefined, {
+  return Res.success(res, { tests: result.data }, 'Data retrieved successfully', undefined, {
     total: result.totalItems,
   });
 };

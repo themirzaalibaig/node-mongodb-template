@@ -30,16 +30,25 @@ const buildListCacheKey = async (entity: string, params: ListCacheKeyParams): Pr
   return buildVersionedCacheKey(entity, [...prefix, ...keyParts]);
 };
 
-const SINGLE_TTL_SECONDS = 300;
-const LIST_TTL_SECONDS = 60;
+const SINGLE_TTL_SECONDS = 20 * 60; // 20 mins
+const LIST_TTL_SECONDS = 15 * 60; // 15 mins
 
-export const createCachedRepository = <T extends Document>(model: Model<T>, entityName: string) => {
+export const createCachedRepository = <T extends Document>(
+  model: Model<T>,
+  entityName: string,
+  ttlSeconds?: number,
+  listTtlSeconds?: number,
+) => {
   const singleKey = (id: string) => makeKey(entityName, id);
 
   return {
     async create(payload: any) {
       const doc = await model.create(payload);
-      await cacheSet(singleKey((doc as any)._id.toString()), doc.toObject(), SINGLE_TTL_SECONDS);
+      await cacheSet(
+        singleKey((doc as any)._id.toString()),
+        doc.toObject(),
+        ttlSeconds || SINGLE_TTL_SECONDS,
+      );
       await incrementCacheVersion(entityName);
       await invalidateEntityListCache(entityName);
       return doc;
@@ -51,14 +60,14 @@ export const createCachedRepository = <T extends Document>(model: Model<T>, enti
       if (cached) return cached;
 
       const doc = await model.findById(id).lean();
-      if (doc) await cacheSet(key, doc as any, SINGLE_TTL_SECONDS);
+      if (doc) await cacheSet(key, doc as any, ttlSeconds || SINGLE_TTL_SECONDS);
       return doc;
     },
 
     async updateById(id: string, payload: any) {
       const doc = await model.findByIdAndUpdate(id, payload, { new: true }).lean();
       if (doc) {
-        await cacheSet(singleKey(id), doc as any, SINGLE_TTL_SECONDS);
+        await cacheSet(singleKey(id), doc as any, ttlSeconds || SINGLE_TTL_SECONDS);
       }
       await incrementCacheVersion(entityName);
       await invalidateEntityListCache(entityName);
@@ -96,7 +105,7 @@ export const createCachedRepository = <T extends Document>(model: Model<T>, enti
 
       const result = (await paginateQuery<any>(query as any, pagination)) as PaginationResult<T>;
 
-      await cacheSet(cacheKey, result, LIST_TTL_SECONDS);
+      await cacheSet(cacheKey, result, listTtlSeconds || LIST_TTL_SECONDS);
       return result;
     },
   };

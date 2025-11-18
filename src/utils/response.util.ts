@@ -51,8 +51,11 @@ export const validationError = (
   message = 'Validation failed',
 ): Response => error(res, message, HttpStatusCode.UNPROCESSABLE_ENTITY, errors);
 
-export const notFound = (res: Response, message = 'Resource not found'): Response =>
-  error(res, message, HttpStatusCode.NOT_FOUND);
+export const notFound = (
+  res: Response,
+  message = 'Resource not found',
+  errors?: ValidationError[],
+): Response => error(res, message, HttpStatusCode.NOT_FOUND, errors);
 
 export const unauthorized = (res: Response, message = 'Unauthorized access'): Response =>
   error(res, message, HttpStatusCode.UNAUTHORIZED);
@@ -66,8 +69,11 @@ export const badRequest = (
   errors?: ValidationError[],
 ): Response => error(res, message, HttpStatusCode.BAD_REQUEST, errors);
 
-export const conflict = (res: Response, message = 'Resource conflict'): Response =>
-  error(res, message, HttpStatusCode.CONFLICT);
+export const conflict = (
+  res: Response,
+  message = 'Resource conflict',
+  errors?: ValidationError[],
+): Response => error(res, message, HttpStatusCode.CONFLICT, errors);
 
 export const rateLimitExceeded = (res: Response, message = 'Rate limit exceeded'): Response =>
   error(res, message, HttpStatusCode.TOO_MANY_REQUESTS);
@@ -83,7 +89,7 @@ export const internalError = (
 
 export const paginated = <T>(
   res: Response,
-  data: T[],
+  data: T,
   totalItems: number,
   currentPage: number,
   itemsPerPage: number,
@@ -103,11 +109,6 @@ export const paginated = <T>(
       nextPage: hasNextPage ? currentPage + 1 : null,
       prevPage: hasPrevPage ? currentPage - 1 : null,
     },
-    total: totalItems,
-    page: currentPage,
-    limit: itemsPerPage,
-    hasNext: hasNextPage,
-    hasPrev: hasPrevPage,
   };
   return success(res, data, message, HttpStatusCode.OK, meta);
 };
