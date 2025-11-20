@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import http from 'http';
+import path from 'path';
 import { v4 as uuid } from 'uuid';
 import routes from '@/routes';
 import { env, connectMongo, connectRedis } from '@/config';
@@ -37,6 +38,8 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   logger.error({ error: err }, 'Unhandled error');
   return Res.internalError(res);
 });
+
+app.use('/uploads', express.static(path.join(process.cwd(), env.LOCAL_UPLOAD_DIR)));
 
 const start = async (): Promise<void> => {
   await connectMongo();
