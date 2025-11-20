@@ -4,3 +4,4 @@ export * from './redis.config';
 export * from './jwt.config';
 export * from './queue.config';
 export * from './email.config';
+export * from './cloudinary.config';

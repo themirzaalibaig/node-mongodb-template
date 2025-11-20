@@ -9,3 +9,4 @@ export * from './websocket.util';
 export * from './validation.util';
 export * from './db.util';
 export * from './repository.util';
+export * from './cloudinary.util';
