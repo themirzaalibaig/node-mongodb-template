@@ -1,5 +1,5 @@
-import { Test } from '@/types';
 import z from 'zod';
+import { Test } from '@/features/test';
 import { listTestsQuerySchema } from '@/validations';
 
 export interface CreateTestDto extends Omit<Test, '_id' | 'createdAt' | 'updatedAt'> {}

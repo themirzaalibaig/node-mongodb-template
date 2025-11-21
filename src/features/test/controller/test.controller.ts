@@ -1,7 +1,8 @@
 import { Response } from 'express';
 import { Res } from '@/utils';
-import { CreateTestDto, UpdateTestDto, GetAllTestsDto, IdParams } from '@/dto';
-import { createTest, getTestById, updateTestById, deleteTestById, listTests } from '@/services';
+import { CreateTestDto, UpdateTestDto, GetAllTestsDto } from '@/features/test/dto/test.dto';
+import { createTest, getTestById, updateTestById, deleteTestById, listTests } from '@/features/test/service/test.service';
+import { IdParams } from '@/dto';
 import { TypedRequest } from '@/types';
 
 export const createTestController = async (

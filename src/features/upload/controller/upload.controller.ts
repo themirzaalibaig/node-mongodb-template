@@ -1,22 +1,20 @@
 import { Response } from 'express';
 import multer from 'multer';
 import { Res } from '@/utils';
+import { anyUploadSchema, imageUploadSchema, videoUploadSchema } from '@/validations';
 import {
-  anyUploadSchema,
-  imageUploadSchema,
-  videoUploadSchema,
   uploadIdParamsSchema,
   uploadUpdateSchema,
   uploadCreateSchema,
   listUploadsQuerySchema,
-} from '@/validations';
+} from '@/features/upload/validations';
 import {
   createUploadFromBuffer,
   getUploadById,
   listUploads,
   updateUploadById,
   deleteUploadById,
-} from '@/services';
+} from '@/features/upload';
 import { TypedRequest } from '@/types';
 
 const storage = multer.memoryStorage();
@@ -96,7 +94,7 @@ export const listUploadsController = async (req: TypedRequest<unknown, unknown>,
   if (!q.success)
     return Res.validationError(
       res,
-      q.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })) as any,
+      q.error.issues.map((i: any) => ({ field: i.path.join('.'), message: i.message })) as any,
     );
   const result = await listUploads(q.data);
   if (q.data.page && q.data.limit)

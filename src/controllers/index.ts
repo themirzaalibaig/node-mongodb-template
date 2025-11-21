@@ -1,2 +1,2 @@
-export * from './test.controller';
-export * from './upload.controller';
+export * from '@/features/test';
+export * from '@/features/upload';

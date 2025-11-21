@@ -1,3 +1,3 @@
 export * from './common.dto';
-export * from './test.dto';
-export * from './upload.dto';
+export * from '@/features/test';
+export * from '@/features/upload';

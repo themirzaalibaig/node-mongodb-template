@@ -1,2 +1,2 @@
-export * from './test.model';
-export * from './upload.model';
+export * from '@/features/test';
+export * from '@/features/upload';

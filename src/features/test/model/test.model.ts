@@ -1,4 +1,4 @@
-import { Test } from '@/types';
+import { Test } from '@/features/test';
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface TestDocument extends Document, Omit<Test, '_id'> {}

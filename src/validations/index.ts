@@ -1,4 +1,4 @@
 export * from './common.validations';
-export * from './test.validations';
-export * from './upload.validations';
-export * from './upload.model.validations';
+export * from '../features/test/validation/test.validations';
+export * from '../features/upload/validations/upload.validations';
+export * from '../features/upload/validations/upload.model.validations';

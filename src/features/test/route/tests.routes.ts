@@ -1,21 +1,20 @@
 import { Router } from 'express';
-import { validate } from '@/middlewares/validation.middleware';
-import { idempotency } from '@/middlewares';
+import { idempotency, validate } from '@/middlewares';
 import {
   createTestSchema,
   updateTestSchema,
   testIdParamsSchema,
   listTestsQuerySchema,
-} from '@/validations';
+} from '@/features/test';
 import {
   createTestController,
   getTestController,
   updateTestController,
   deleteTestController,
   listTestsController,
-} from '@/controllers';
+} from '@/features/test';
 
-const testsRouter = Router();
+export const testsRouter = Router();
 
 testsRouter.get('/', validate({ query: listTestsQuerySchema }), listTestsController);
 testsRouter.post(
@@ -31,5 +30,3 @@ testsRouter.put(
   updateTestController,
 );
 testsRouter.delete('/:id', validate({ params: testIdParamsSchema }), deleteTestController);
-
-export default testsRouter;

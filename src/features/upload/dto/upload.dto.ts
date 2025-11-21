@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { UploadStatus } from '@/types';
-import { listUploadsQuerySchema } from '@/validations';
+import { listUploadsQuerySchema } from '@/features/upload/validations/upload.model.validations';
 
 export interface CreateUploadDto {
   refType?: string;

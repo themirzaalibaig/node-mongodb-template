@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { querySchema } from './common.validations';
+import { querySchema } from '@/validations/common.validations';
 
 export const uploadUpdateSchema = z.object({
   status: z.enum(['TEMP', 'ACTIVE']).optional(),

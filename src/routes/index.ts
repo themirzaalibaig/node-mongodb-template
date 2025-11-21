@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { Res } from '@/utils/response';
 import { env } from '@/config/env.config';
-import testsRouter from '@/routes/tests.routes';
-import uploadsRouter from '@/routes/uploads.routes';
+import { testsRouter } from '@/features/test';
+import { uploadsRouter } from '@/features/upload';
 
 const router = Router();
 
