@@ -5,8 +5,6 @@ import {
   updateTestSchema,
   testIdParamsSchema,
   listTestsQuerySchema,
-} from '@/features/test';
-import {
   createTestController,
   getTestController,
   updateTestController,

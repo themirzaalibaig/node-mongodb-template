@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { commonSchemas, querySchema } from '@/validations/common.validations';
+import { commonSchemas, querySchema } from '@/validations';
 
 export const createTestSchema = z.object({
   firstName: z.string().min(1),

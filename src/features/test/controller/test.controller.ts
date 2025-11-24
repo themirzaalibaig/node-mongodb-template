@@ -1,7 +1,15 @@
 import { Response } from 'express';
 import { Res } from '@/utils';
-import { CreateTestDto, UpdateTestDto, GetAllTestsDto } from '@/features/test/dto/test.dto';
-import { createTest, getTestById, updateTestById, deleteTestById, listTests } from '@/features/test/service/test.service';
+import {
+  CreateTestDto,
+  UpdateTestDto,
+  GetAllTestsDto,
+  createTest,
+  getTestById,
+  updateTestById,
+  deleteTestById,
+  listTests,
+} from '@/features/test';
 import { IdParams } from '@/dto';
 import { TypedRequest } from '@/types';
 
