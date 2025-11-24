@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { validate } from '@/middlewares/validation.middleware';
+import { validate } from '@/middlewares';
 import { idempotency } from '@/middlewares';
 import {
-  uploadCreateSchema,
+  uploadUpdateSchema,
   uploadIdParamsSchema,
   listUploadsQuerySchema,
   createUploadController,
@@ -28,7 +28,7 @@ uploadsRouter.post(
 uploadsRouter.get('/:id', validate({ params: uploadIdParamsSchema }), getUploadController);
 uploadsRouter.put(
   '/:id',
-  validate({ params: uploadIdParamsSchema, body: uploadCreateSchema }),
+  validate({ params: uploadIdParamsSchema, body: uploadUpdateSchema }),
   updateUploadController,
 );
 uploadsRouter.delete('/:id', validate({ params: uploadIdParamsSchema }), deleteUploadController);

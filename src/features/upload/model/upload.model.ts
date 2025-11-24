@@ -1,26 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { UploadStatus } from '@/types';
+import { Upload } from '@/types';
 
-export interface UploadDocument extends Document {
-  originalFilename: string;
-  provider: 'local' | 'cloudinary' | 'aws';
-  publicId: string;
-  url: string;
-  secureUrl: string;
-  resourceType?: string;
-  bytes?: number;
-  width?: number;
-  height?: number;
-  format?: string;
-  status: UploadStatus;
-  refType?: string;
-  refId?: string;
-  seo?: {
-    metaTitle?: string;
-    metaDescription?: string;
-    metaKeywords?: string[];
-  };
-}
+export interface UploadDocument extends Document, Omit<Upload, '_id'> {}
 
 const UploadSchema = new Schema<UploadDocument>(
   {
@@ -30,10 +11,6 @@ const UploadSchema = new Schema<UploadDocument>(
     url: { type: String, required: true },
     secureUrl: { type: String, required: true },
     resourceType: { type: String },
-    bytes: { type: Number },
-    width: { type: Number },
-    height: { type: Number },
-    format: { type: String },
     status: { type: String, required: true, enum: ['TEMP', 'ACTIVE'], default: 'TEMP' },
     refType: { type: String },
     refId: { type: String },

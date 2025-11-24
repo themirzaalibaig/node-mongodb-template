@@ -1,21 +1,8 @@
 import { z } from 'zod';
-import { UploadStatus } from '@/types';
-import { listUploadsQuerySchema } from '@/features/upload/validations/upload.model.validations';
+import { listUploadsQuerySchema, Upload } from '@/features/upload/';
 
-export interface CreateUploadDto {
-  refType?: string;
-  refId?: string;
-}
+export interface CreateUploadDto extends Partial<Pick<Upload, 'refType' | 'refId' | 'seo'>> {}
 
-export interface UpdateUploadDto {
-  status?: UploadStatus;
-  refType?: string;
-  refId?: string;
-  seo?: {
-    metaTitle?: string;
-    metaDescription?: string;
-    metaKeywords?: string[];
-  };
-}
+export interface UpdateUploadDto extends Partial<CreateUploadDto> {}
 
 export interface GetAllUploadsDto extends z.infer<typeof listUploadsQuerySchema> {}

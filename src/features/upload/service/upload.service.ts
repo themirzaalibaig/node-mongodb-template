@@ -1,19 +1,23 @@
-import { UploadModel } from '@/features/upload/model/upload.model';
+import { v4 as uuid } from 'uuid';
+import {
+  UploadModel,
+  GetAllUploadsDto,
+  Upload,
+  UploadStatus,
+  CreateUploadDto,
+} from '@/features/upload';
 import {
   storageUploadBuffer,
   storageUploadFile,
   storageDeleteAsset,
   createCachedRepository,
 } from '@/utils';
-import { Upload, UploadStatus } from '@/types';
-import { GetAllUploadsDto } from '@/features/upload/dto/upload.dto';
-import { v4 as uuid } from 'uuid';
 
 const repo = createCachedRepository(UploadModel as any, 'upload');
 
 export const createUploadFromBuffer = async (
   file: { buffer: Buffer; originalname: string; mimetype?: string },
-  payload: { refType?: string; refId?: string } = {},
+  payload: CreateUploadDto,
 ): Promise<Upload> => {
   const ext = file.originalname.split('.').pop() || 'bin';
   const name = `${Date.now()}-${uuid()}.${ext}`;
@@ -29,13 +33,10 @@ export const createUploadFromBuffer = async (
     url: stored.url,
     secureUrl: stored.secureUrl,
     resourceType: stored.resourceType,
-    bytes: stored.bytes,
-    width: stored.width,
-    height: stored.height,
-    format: stored.format,
     status: 'TEMP' as UploadStatus,
     refType: payload.refType,
     refId: payload.refId,
+    seo: payload.seo,
   });
   return (doc as any).toObject
     ? ((doc as any).toObject() as unknown as Upload)
@@ -59,10 +60,6 @@ export const createUploadFromPath = async (
     url: stored.url,
     secureUrl: stored.secureUrl,
     resourceType: stored.resourceType,
-    bytes: stored.bytes,
-    width: stored.width,
-    height: stored.height,
-    format: stored.format,
     status: 'TEMP' as UploadStatus,
     refType: payload.refType,
     refId: payload.refId,
