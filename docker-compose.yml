@@ -22,7 +22,7 @@ services:
     volumes:
       - ./:/usr/src/app
       - node_modules:/usr/src/app/node_modules
-    command: pnpm dev
+    command: sh -c "pnpm install && pnpm dev"
 
   mongo:
     image: mongo:7
