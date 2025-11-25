@@ -2,18 +2,7 @@ import { Response } from 'express';
 import multer from 'multer';
 import { Res } from '@/utils';
 import { TypedRequest } from '@/types';
-import {
-  anyUploadSchema,
-  CreateUploadDto,
-  imageUploadSchema,
-  videoUploadSchema,
-} from '@/features/upload';
-import {
-  uploadIdParamsSchema,
-  uploadUpdateSchema,
-  uploadCreateSchema,
-  listUploadsQuerySchema,
-} from '@/features/upload/validations';
+import { CreateUploadDto, UpdateUploadDto, GetAllUploadsDto } from '@/features/upload';
 import {
   createUploadFromBuffer,
   getUploadById,
@@ -21,6 +10,7 @@ import {
   updateUploadById,
   deleteUploadById,
 } from '@/features/upload';
+import { IdParams } from '@/dto';
 
 const storage = multer.memoryStorage();
 export const uploadSingleMiddleware = multer({ storage }).single('file');
@@ -32,14 +22,6 @@ export const createUploadController = async (
 ) => {
   try {
     const file = (req as any).file;
-    const parsed = imageUploadSchema.safeParse(file);
-    const parsedVideo = videoUploadSchema.safeParse(file);
-    const parsedAny = anyUploadSchema(
-      ['application/pdf', 'text/plain', 'application/json'],
-      10 * 1024 * 1024,
-    ).safeParse(file);
-    if (!parsed.success && !parsedVideo.success && !parsedAny.success)
-      return Res.validationError(res, [{ field: 'file', message: 'Invalid file' }] as any);
     const doc = await createUploadFromBuffer(file, req.body);
     return Res.created(res, { upload: doc });
   } catch {
@@ -52,26 +34,12 @@ export const createUploadsController = async (
   res: Response,
 ) => {
   try {
-    const body = uploadCreateSchema.safeParse(req.body);
-    if (!body.success)
-      return Res.validationError(
-        res,
-        body.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })) as any,
-      );
     const files = (req as any).files || [];
     const results = [] as any[];
     for (const f of files) {
-      const ok =
-        imageUploadSchema.safeParse(f).success ||
-        videoUploadSchema.safeParse(f).success ||
-        anyUploadSchema(
-          ['application/pdf', 'text/plain', 'application/json'],
-          10 * 1024 * 1024,
-        ).safeParse(f).success;
-      if (!ok) continue;
       const doc = await createUploadFromBuffer(f, {
-        refType: body.data.refType,
-        refId: body.data.refId,
+        refType: (req.body as any).refType,
+        refId: (req.body as any).refId,
       });
       results.push(doc);
     }
@@ -81,51 +49,31 @@ export const createUploadsController = async (
   }
 };
 
-export const getUploadController = async (req: TypedRequest<unknown, unknown>, res: Response) => {
-  const params = uploadIdParamsSchema.safeParse((req as any).params);
-  if (!params.success)
-    return Res.validationError(
-      res,
-      params.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })) as any,
-    );
-  const doc = await getUploadById(params.data.id);
+export const getUploadController = async (
+  req: TypedRequest<unknown, unknown, IdParams>,
+  res: Response,
+) => {
+  const doc = await getUploadById(req.params.id);
   if (!doc) return Res.notFound(res, 'Upload not found');
   return Res.success(res, { upload: doc });
 };
 
-export const listUploadsController = async (req: TypedRequest<unknown, unknown>, res: Response) => {
-  const q = listUploadsQuerySchema.safeParse((req as any).query);
-  if (!q.success)
-    return Res.validationError(
-      res,
-      q.error.issues.map((i: any) => ({ field: i.path.join('.'), message: i.message })) as any,
-    );
-  const result = await listUploads(q.data);
-  if (q.data.page && q.data.limit)
-    return Res.paginated(res, { uploads: result.data }, result.total, q.data.page, q.data.limit);
+export const listUploadsController = async (req: TypedRequest<GetAllUploadsDto>, res: Response) => {
+  const dto = req.query;
+  const result = await listUploads(dto);
+  if (dto.page && dto.limit)
+    return Res.paginated(res, { uploads: result.data }, result.total, dto.page, dto.limit);
   return Res.success(res, { uploads: result.data }, 'Data retrieved successfully', undefined, {
     total: result.total,
   });
 };
 
 export const updateUploadController = async (
-  req: TypedRequest<unknown, unknown>,
+  req: TypedRequest<unknown, UpdateUploadDto, IdParams>,
   res: Response,
 ) => {
   try {
-    const params = uploadIdParamsSchema.safeParse((req as any).params);
-    if (!params.success)
-      return Res.validationError(
-        res,
-        params.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })) as any,
-      );
-    const body = uploadUpdateSchema.safeParse(req.body);
-    if (!body.success)
-      return Res.validationError(
-        res,
-        body.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })) as any,
-      );
-    const doc = await updateUploadById(params.data.id, body.data as any);
+    const doc = await updateUploadById(req.params.id, req.body as any);
     if (!doc) return Res.notFound(res, 'Upload not found');
     return Res.success(res, { upload: doc }, 'Updated');
   } catch {
@@ -134,16 +82,10 @@ export const updateUploadController = async (
 };
 
 export const deleteUploadController = async (
-  req: TypedRequest<unknown, unknown>,
+  req: TypedRequest<unknown, unknown, IdParams>,
   res: Response,
 ) => {
-  const params = uploadIdParamsSchema.safeParse((req as any).params);
-  if (!params.success)
-    return Res.validationError(
-      res,
-      params.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })) as any,
-    );
-  const ok = await deleteUploadById(params.data.id);
+  const ok = await deleteUploadById(req.params.id);
   if (!ok) return Res.notFound(res, 'Upload not found');
   return Res.noContent(res);
 };

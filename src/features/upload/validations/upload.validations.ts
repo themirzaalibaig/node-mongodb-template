@@ -1,22 +1,30 @@
 import { z } from 'zod';
+import { commonSchemas, querySchema } from '@/validations';
 
-const allowedImages = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const allowedVideos = ['video/mp4', 'video/webm', 'video/ogg'];
-
-export const anyUploadSchema = (mimes: string[], maxBytes: number) =>
-  z
+export const uploadUpdateSchema = z.object({
+  status: z.enum(['TEMP', 'ACTIVE']).optional(),
+  refType: z.string().optional(),
+  refId: z.string().optional(),
+  seo: z
     .object({
-      fieldname: z.string(),
-      originalname: z.string(),
-      encoding: z.string(),
-      mimetype: z.string(),
-      size: z.number().max(maxBytes),
-      buffer: z.instanceof(Buffer),
+      altText: z.string().optional(),
+      metaTitle: z.string().optional(),
+      metaDescription: z.string().optional(),
+      metaKeywords: z.array(z.string()).optional(),
     })
-    .refine((f) => mimes.includes(f.mimetype), {
-      message: 'Unsupported file type',
-      path: ['mimetype'],
-    });
+    .optional(),
+});
 
-export const imageUploadSchema = anyUploadSchema(allowedImages, 10 * 1024 * 1024);
-export const videoUploadSchema = anyUploadSchema(allowedVideos, 100 * 1024 * 1024);
+export const uploadCreateSchema = z.object({
+  refType: z.string().optional(),
+  refId: z.string().optional(),
+});
+
+export const uploadIdParamsSchema = z.object({ id: commonSchemas.objectId });
+
+export const listUploadsQuerySchema = querySchema.extend({
+  refType: z.string().optional(),
+  refId: z.string().optional(),
+  status: z.enum(['TEMP', 'ACTIVE']).optional(),
+  type: z.enum(['image', 'video', 'raw', 'auto']).optional(),
+});

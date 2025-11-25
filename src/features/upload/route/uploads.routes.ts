@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { validate } from '@/middlewares';
 import { idempotency } from '@/middlewares';
+import { validateUploadSingleFile, validateUploadMultipleFiles } from '@/middlewares';
 import {
+  uploadCreateSchema,
   uploadUpdateSchema,
   uploadIdParamsSchema,
   listUploadsQuerySchema,
@@ -18,11 +20,20 @@ import {
 export const uploadsRouter = Router();
 
 uploadsRouter.get('/', validate({ query: listUploadsQuerySchema }), listUploadsController);
-uploadsRouter.post('/', idempotency('upload'), uploadSingleMiddleware, createUploadController);
+uploadsRouter.post(
+  '/',
+  validate({ body: uploadCreateSchema }),
+  idempotency('upload'),
+  uploadSingleMiddleware,
+  validateUploadSingleFile,
+  createUploadController,
+);
 uploadsRouter.post(
   '/multiple',
+  validate({ body: uploadCreateSchema }),
   idempotency('uploadMultiple'),
   uploadMultipleMiddleware,
+  validateUploadMultipleFiles,
   createUploadsController,
 );
 uploadsRouter.get('/:id', validate({ params: uploadIdParamsSchema }), getUploadController);
