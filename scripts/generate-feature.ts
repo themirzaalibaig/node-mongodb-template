@@ -34,4 +34,3 @@ write(path.join(root, 'validation', `${name}.validations.ts`), `export {};`);
 write(path.join(root, 'type', `${name}.type.ts`), `export {};`);
 
 console.log('done');
-

@@ -1,7 +1,10 @@
 import { Router } from 'express';
-import { validate } from '@/middlewares';
-import { idempotency } from '@/middlewares';
-import { validateUploadSingleFile, validateUploadMultipleFiles } from '@/middlewares';
+import {
+  validate,
+  idempotency,
+  validateUploadSingleFile,
+  validateUploadMultipleFiles,
+} from '@/middlewares';
 import {
   uploadCreateSchema,
   uploadUpdateSchema,

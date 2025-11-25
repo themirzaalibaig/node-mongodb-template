@@ -1,5 +1,5 @@
-import { TestModel, CreateTestDto, UpdateTestDto, GetAllTestsDto } from '@/features/test/';
 import { createCachedRepository } from '@/utils';
+import { TestModel, CreateTestDto, UpdateTestDto, GetAllTestsDto } from '@/features/test';
 
 const repo = createCachedRepository(TestModel, 'test');
 

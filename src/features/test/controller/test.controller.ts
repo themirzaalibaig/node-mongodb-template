@@ -26,7 +26,7 @@ export const createTestController = async (
         { field: 'email', message: 'Email already exists', value: req.body.email },
       ]);
     }
-    return Res.internalError(res);
+    return Res.internalError(res, 'Internal server error', err);
   }
 };
 
@@ -53,7 +53,7 @@ export const updateTestController = async (
         { field: 'email', message: 'Email already exists', value: req.body.email },
       ]);
     }
-    return Res.internalError(res);
+    return Res.internalError(res, 'Internal server error', err);
   }
 };
 

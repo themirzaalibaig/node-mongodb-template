@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { Upload } from '@/types';
+import { Upload } from '@/features/upload';
 
 export interface UploadDocument extends Document, Omit<Upload, '_id'> {}
 

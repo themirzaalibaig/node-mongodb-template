@@ -42,7 +42,11 @@ export const idempotency = (operation: string, opts: IdempotencyOptions = {}) =>
         const result = originalJson(body);
         const code = statusCode ?? res.statusCode;
         if (allowed.includes(code)) {
-          cacheSet(key, { status: code, body }, ttl).finally(() => releaseLock(lockKey));
+          try {
+            cacheSet(key, { status: code, body }, ttl).finally(() => releaseLock(lockKey));
+          } catch {
+            releaseLock(lockKey).catch(() => {});
+          }
         } else {
           releaseLock(lockKey).catch(() => {});
         }

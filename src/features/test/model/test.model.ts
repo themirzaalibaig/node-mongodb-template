@@ -12,6 +12,4 @@ const TestSchema = new Schema<TestDocument>(
   { timestamps: true },
 );
 
-TestSchema.index({ email: 1 }, { unique: true });
-
 export const TestModel = mongoose.model<TestDocument>('Test', TestSchema);
