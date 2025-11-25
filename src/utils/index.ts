@@ -12,4 +12,3 @@ export * from './repository.util';
 export * from './cloudinary.util';
 export * from './storage-local.util';
 export * from './storage-s3.util';
-export * from './storage.provider';

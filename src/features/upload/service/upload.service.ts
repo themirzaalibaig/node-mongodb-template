@@ -6,12 +6,8 @@ import {
   UploadStatus,
   CreateUploadDto,
 } from '@/features/upload';
-import {
-  storageUploadBuffer,
-  storageUploadFile,
-  storageDeleteAsset,
-  createCachedRepository,
-} from '@/utils';
+import { createCachedRepository } from '@/utils';
+import { storageUploadBuffer, storageUploadFile, storageDeleteAsset } from '@/providers';
 
 const repo = createCachedRepository(UploadModel as any, 'upload');
 
