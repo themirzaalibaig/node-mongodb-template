@@ -41,6 +41,9 @@ export const env = {
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || '',
   CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER || 'uploads',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  OPENAI_API_BASE_URL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+  OPENAI_API_MODEL: process.env.OPENAI_API_MODEL || 'gpt-5',
   get BASE_API_PATH(): string {
     return this.API_PREFIX;
   },
