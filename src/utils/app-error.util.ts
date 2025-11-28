@@ -20,4 +20,28 @@ export class AppError extends Error {
 
     Error.captureStackTrace(this);
   }
+
+  static badRequest(message: string, errors?: ValidationError[]): AppError {
+    return new AppError(message, HttpStatusCode.BAD_REQUEST, errors);
+  }
+
+  static unauthorized(message = 'Unauthorized access'): AppError {
+    return new AppError(message, HttpStatusCode.UNAUTHORIZED);
+  }
+
+  static forbidden(message = 'Access forbidden'): AppError {
+    return new AppError(message, HttpStatusCode.FORBIDDEN);
+  }
+
+  static notFound(message = 'Resource not found'): AppError {
+    return new AppError(message, HttpStatusCode.NOT_FOUND);
+  }
+
+  static conflict(message = 'Resource conflict'): AppError {
+    return new AppError(message, HttpStatusCode.CONFLICT);
+  }
+
+  static validation(message = 'Validation failed', errors?: ValidationError[]): AppError {
+    return new AppError(message, HttpStatusCode.UNPROCESSABLE_ENTITY, errors);
+  }
 }
