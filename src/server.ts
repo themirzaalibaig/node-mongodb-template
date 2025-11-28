@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import routes from '@/routes';
 import { env, connectMongo, connectRedis } from '@/config';
 import { logger, Res, initTestWorker, addTestJob, initWebsocket } from '@/utils';
-import { apiRateLimiter } from '@/middlewares';
+import { apiRateLimiter, globalErrorHandler } from '@/middlewares';
 
 const app = express();
 
@@ -34,10 +34,7 @@ app.use((req, res) => {
   return Res.notFound(res, 'Route not found');
 });
 
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  logger.error({ error: err }, 'Unhandled error');
-  return Res.internalError(res);
-});
+app.use(globalErrorHandler);
 
 app.use('/uploads', express.static(path.join(process.cwd(), env.LOCAL_UPLOAD_DIR)));
 
